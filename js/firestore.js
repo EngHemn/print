@@ -12,34 +12,25 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { db } from "../firebase.js";
 
+function sortByCreatedAt(items) {
+  return items.sort((a, b) => {
+    const aTime = a.createdAt?.seconds ?? a.createdAt ?? 0;
+    const bTime = b.createdAt?.seconds ?? b.createdAt ?? 0;
+    return bTime - aTime;
+  });
+}
+
 async function fetchCollectionSorted(name) {
   try {
-    const snap = await getDocs(
-      query(collection(db, name), orderBy("createdAt", "desc"))
+    const snap = await getDocs(collection(db, name));
+    const items = sortByCreatedAt(
+      snap.docs.map((d) => ({ id: d.id, ...d.data() }))
     );
-    const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    console.log(`[Firestore] ${name} loaded (sorted):`, items.length);
+    console.log(`[Firestore] ${name} loaded:`, items.length);
     return items;
-  } catch (orderError) {
-    console.warn(
-      `[Firestore] ${name} orderBy failed, using fallback:`,
-      orderError
-    );
-    try {
-      const snap = await getDocs(collection(db, name));
-      const items = snap.docs
-        .map((d) => ({ id: d.id, ...d.data() }))
-        .sort((a, b) => {
-          const aTime = a.createdAt?.seconds ?? 0;
-          const bTime = b.createdAt?.seconds ?? 0;
-          return bTime - aTime;
-        });
-      console.log(`[Firestore] ${name} loaded (fallback):`, items.length);
-      return items;
-    } catch (fetchError) {
-      console.error(`[Firestore] Failed to fetch ${name}:`, fetchError);
-      throw fetchError;
-    }
+  } catch (fetchError) {
+    console.error(`[Firestore] Failed to fetch ${name}:`, fetchError);
+    throw fetchError;
   }
 }
 

@@ -1,5 +1,5 @@
 import { initLayout } from "./cart.js";
-import { initAllAnimations } from "./animations.js";
+import { initAllAnimations, observeAnimatedElements } from "./animations.js";
 import { fetchCategories, fetchProducts } from "./firestore.js";
 import {
   renderProductCard,
@@ -45,6 +45,7 @@ function renderCategoryFilters(container) {
   ];
 
   container.innerHTML = cards.join("");
+  observeAnimatedElements(container);
 
   if (selectedCategoryId) {
     const activeCard = container.querySelector(".shop-category-card.active");
@@ -85,6 +86,7 @@ function renderProducts(grid, searchInput) {
 
   console.log("[Shop] Showing products:", filtered.length, "of", allProducts.length);
   grid.innerHTML = filtered.map((p) => renderProductCard(p)).join("");
+  observeAnimatedElements(grid);
 }
 
 function setSelectedCategory(categoryId, categoriesList, grid, searchInput) {
@@ -146,6 +148,7 @@ async function initShop() {
   console.log("[Shop] Ready — filter:", selectedCategoryId || "all");
 
   if (selectedCategoryId && !allCategories.some((c) => c.id === selectedCategoryId)) {
+    console.warn("[Shop] Unknown category in URL, showing all:", selectedCategoryId);
     selectedCategoryId = "";
   }
 
@@ -155,6 +158,25 @@ async function initShop() {
 
   if (!productsLoadFailed) {
     renderProducts(grid, searchInput);
+
+    if (
+      selectedCategoryId &&
+      allProducts.length > 0 &&
+      !filterProducts(allProducts, { categoryId: selectedCategoryId }).length
+    ) {
+      console.warn(
+        "[Shop] No products for category",
+        selectedCategoryId,
+        "— showing all products"
+      );
+      selectedCategoryId = "";
+      const url = new URL(window.location.href);
+      url.searchParams.delete("category");
+      window.history.replaceState({}, "", url);
+      renderCategoryFilters(categoriesList);
+      renderProducts(grid, searchInput);
+    }
+
     bindProductEvents(allProducts, grid);
   }
 

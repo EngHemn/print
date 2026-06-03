@@ -1,21 +1,38 @@
-export function initScrollAnimations() {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("in-view");
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
-  );
+const ANIMATION_SELECTOR =
+  ".fade-in, .slide-up, .slide-left, .slide-right, .scale-in, .stagger-children";
 
-  document
-    .querySelectorAll(
-      ".fade-in, .slide-up, .slide-left, .slide-right, .scale-in, .stagger-children"
-    )
-    .forEach((el) => observer.observe(el));
+let scrollObserver = null;
+
+function getScrollObserver() {
+  if (!scrollObserver) {
+    scrollObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            scrollObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+  }
+  return scrollObserver;
+}
+
+/** Observe animated elements (e.g. after dynamic HTML is injected). */
+export function observeAnimatedElements(root = document) {
+  const scope = root instanceof Element ? root : document;
+  const observer = getScrollObserver();
+  scope.querySelectorAll(ANIMATION_SELECTOR).forEach((el) => {
+    if (!el.classList.contains("in-view")) {
+      observer.observe(el);
+    }
+  });
+}
+
+export function initScrollAnimations() {
+  observeAnimatedElements(document);
 }
 
 export function initParallax() {

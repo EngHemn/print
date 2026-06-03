@@ -1,5 +1,5 @@
 import { initLayout } from "./cart.js";
-import { initAllAnimations } from "./animations.js";
+import { initAllAnimations, observeAnimatedElements } from "./animations.js";
 import { fetchCategories, fetchProducts } from "./firestore.js";
 import { renderProductCard, bindProductEvents } from "./products.js";
 import { renderCategoryCard } from "./categories.js";
@@ -31,6 +31,7 @@ async function initHome() {
         categoriesGrid.innerHTML = categories
           .map((c) => renderCategoryCard(c, { mode: "link" }))
           .join("");
+        observeAnimatedElements(categoriesGrid);
       }
     }
 
@@ -52,6 +53,7 @@ function renderHomeProducts(productsGrid) {
     return;
   }
   productsGrid.innerHTML = featured.map((p) => renderProductCard(p)).join("");
+  observeAnimatedElements(productsGrid);
   bindProductEvents(homeProducts, productsGrid);
 }
 

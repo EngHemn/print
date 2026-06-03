@@ -1,28 +1,24 @@
 import { initLayout } from "./cart.js";
 import { initAllAnimations } from "./animations.js";
 import { fetchCategories, fetchProducts } from "./firestore.js";
-import { renderProductCard, bindProductEvents } from "./products.js";
-import { escapeHtml } from "./config.js";
+import {
+  renderProductCard,
+  renderCategoryCard,
+  bindProductEvents,
+} from "./products.js";
+import { showLoading, showEmpty, showError, MESSAGES } from "./ui-states.js";
 
 const HOME_PRODUCT_LIMIT = 8;
 let homeProducts = [];
-
-function renderCategoryCard(category) {
-  return `
-    <a href="shop.html?category=${category.id}" class="category-card card-3d glass-card fade-in">
-      <div class="category-image">
-        <img src="${category.image || "images/placeholder-bag.svg"}" alt="${escapeHtml(category.name)}" loading="lazy" />
-      </div>
-      <h3>${escapeHtml(category.name)}</h3>
-    </a>
-  `;
-}
 
 async function initHome() {
   const categoriesGrid = document.getElementById("home-categories-grid");
   const productsGrid = document.getElementById("home-products-grid");
 
   if (!categoriesGrid && !productsGrid) return;
+
+  showLoading(categoriesGrid);
+  showLoading(productsGrid);
 
   try {
     const [categories, products] = await Promise.all([
@@ -32,9 +28,11 @@ async function initHome() {
 
     if (categoriesGrid) {
       if (!categories.length) {
-        categoriesGrid.innerHTML = `<p class="empty-state">No categories yet.</p>`;
+        showEmpty(categoriesGrid, MESSAGES.categoriesEmpty);
       } else {
-        categoriesGrid.innerHTML = categories.map(renderCategoryCard).join("");
+        categoriesGrid.innerHTML = categories
+          .map((c) => renderCategoryCard(c, { mode: "link" }))
+          .join("");
       }
     }
 
@@ -43,19 +41,15 @@ async function initHome() {
       renderHomeProducts(productsGrid);
     }
   } catch {
-    if (categoriesGrid) {
-      categoriesGrid.innerHTML = `<p class="empty-state">Failed to load categories.</p>`;
-    }
-    if (productsGrid) {
-      productsGrid.innerHTML = `<p class="empty-state">Failed to load products.</p>`;
-    }
+    showError(categoriesGrid, MESSAGES.categoriesError);
+    showError(productsGrid, MESSAGES.productsError);
   }
 }
 
 function renderHomeProducts(productsGrid) {
   const featured = homeProducts.slice(0, HOME_PRODUCT_LIMIT);
   if (!featured.length) {
-    productsGrid.innerHTML = `<p class="empty-state">No products yet.</p>`;
+    showEmpty(productsGrid, MESSAGES.productsEmpty);
     return;
   }
   productsGrid.innerHTML = featured.map((p) => renderProductCard(p)).join("");

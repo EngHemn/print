@@ -1,0 +1,15 @@
+export const ADMIN_MESSAGES = {
+  loading: "Loading…",
+  productsEmpty: "No products yet. Add your first product to get started.",
+  productsNotFound: "No products match your search or category filter.",
+  productsError: "Could not load products. Check your connection and try again.",
+  categoriesEmpty: "No categories yet. Create a category first.",
+  categoriesError: "Could not load categories.",
+  ordersEmpty: "No orders yet.",
+  ordersError: "Could not load orders.",
+  statsError: "Could not load dashboard statistics.",
+  deleteProductTitle: "Delete product?",
+  deleteProductMessage: "This product will be removed permanently. This action cannot be undone.",
+  deleteCategoryTitle: "Delete category?",
+  deleteCategoryMessage: "This category will be removed permanently. Products using it may need updating.",
+};

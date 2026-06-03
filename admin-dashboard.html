@@ -14,10 +14,10 @@
       <span class="gradient-text">Admin</span>
     </div>
     <nav class="sidebar-nav">
-      <button class="sidebar-link active" data-section="dashboard">📊 Dashboard</button>
-      <button class="sidebar-link" data-section="categories">📁 Categories</button>
-      <button class="sidebar-link" data-section="products">🛍️ Products</button>
-      <button class="sidebar-link" data-section="orders">📦 Orders</button>
+      <a href="admin-dashboard.html" class="sidebar-link" data-page="dashboard">📊 Dashboard</a>
+      <a href="admin-dashboard.html#categories" class="sidebar-link" data-page="categories">📁 Categories</a>
+      <a href="admin-products.html" class="sidebar-link" data-page="products">🛍️ Products</a>
+      <a href="admin-dashboard.html#orders" class="sidebar-link" data-page="orders">📦 Orders</a>
     </nav>
     <button class="btn btn-outline btn-sm" id="logout-btn">Logout</button>
   </aside>
@@ -28,29 +28,30 @@
         <button class="admin-menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button>
         <h2>Shopping Bag Dashboard</h2>
       </div>
-      <div class="admin-topbar-actions" id="topbar-actions">
-        <button type="button" class="btn btn-primary btn-3d" id="header-add-product" hidden>+ Add Product</button>
-      </div>
     </div>
 
     <section id="section-dashboard" class="admin-section active">
-      <div class="stats-grid">
+      <div class="stats-grid" id="stats-grid">
         <div class="stat-card glass-card card-3d">
           <h4>Total Products</h4>
-          <div class="stat-value" id="stat-products">0</div>
+          <div class="stat-value" id="stat-products"><span class="stat-loading">…</span></div>
         </div>
         <div class="stat-card glass-card card-3d">
           <h4>Total Categories</h4>
-          <div class="stat-value" id="stat-categories">0</div>
+          <div class="stat-value" id="stat-categories"><span class="stat-loading">…</span></div>
         </div>
         <div class="stat-card glass-card card-3d">
           <h4>Total Orders</h4>
-          <div class="stat-value" id="stat-orders">0</div>
+          <div class="stat-value" id="stat-orders"><span class="stat-loading">…</span></div>
         </div>
         <div class="stat-card glass-card card-3d">
           <h4>Total Revenue</h4>
-          <div class="stat-value" id="stat-revenue">IQD 0</div>
+          <div class="stat-value" id="stat-revenue"><span class="stat-loading">…</span></div>
         </div>
+      </div>
+      <div class="state-message error-state admin-alert" id="stats-error" hidden role="alert">
+        <p>Could not load statistics.</p>
+        <button type="button" class="btn btn-sm btn-outline" id="stats-retry">Try again</button>
       </div>
     </section>
 
@@ -71,9 +72,20 @@
             <button type="submit" class="btn btn-primary btn-3d">Add Category</button>
           </form>
         </div>
-        <div class="admin-panel glass-card">
+        <div class="admin-panel glass-card admin-panel-relative">
           <h3>All Categories</h3>
-          <div class="admin-table-wrap">
+          <div class="state-message loading-state" id="categories-loading" role="status">
+            <span class="loading-spinner" aria-hidden="true"></span>
+            <p>Loading categories…</p>
+          </div>
+          <div class="state-message error-state admin-alert" id="categories-error" hidden role="alert">
+            <p>Could not load categories.</p>
+            <button type="button" class="btn btn-sm btn-outline" id="categories-retry">Try again</button>
+          </div>
+          <div class="state-message empty-state" id="categories-empty" hidden role="status">
+            <p>No categories yet. Add one using the form.</p>
+          </div>
+          <div class="admin-table-wrap" id="categories-table-wrap" hidden>
             <table class="admin-table">
               <thead>
                 <tr><th>Image</th><th>Name</th><th>Actions</th></tr>
@@ -85,114 +97,21 @@
       </div>
     </section>
 
-    <section id="section-products" class="admin-section">
-      <div class="products-toolbar glass-card">
-        <div class="products-toolbar-filters">
-          <div class="form-group products-search-group">
-            <label for="product-search" class="sr-only">Search products</label>
-            <input type="search" id="product-search" placeholder="Search by name or description…" autocomplete="off" />
-          </div>
-          <div class="form-group">
-            <label for="product-filter-category">Category</label>
-            <select id="product-filter-category">
-              <option value="">All categories</option>
-            </select>
-          </div>
-        </div>
-        <p class="products-count" id="products-count">0 products</p>
-      </div>
-
-      <div class="admin-panel glass-card">
-        <h3>Products</h3>
-        <div class="admin-table-wrap">
-          <table class="admin-table admin-table-products">
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Quantity / Price</th>
-                <th>Stock</th>
-                <th>Category</th>
-                <th>Gallery</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="products-table"></tbody>
-          </table>
-        </div>
-        <p class="table-empty" id="products-empty" hidden>No products match your search.</p>
-      </div>
-    </section>
-
-    <div class="admin-modal" id="product-modal" aria-hidden="true">
-      <div class="admin-modal-overlay" id="product-modal-overlay"></div>
-      <div class="admin-modal-dialog glass-card" role="dialog" aria-labelledby="prod-form-title">
-        <button type="button" class="admin-modal-close" id="product-modal-close" aria-label="Close">&times;</button>
-        <h3 id="prod-form-title">Add Product</h3>
-        <form id="product-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="prod-name">Name *</label>
-              <input type="text" id="prod-name" name="name" required />
-            </div>
-            <div class="form-group">
-              <label for="product-category">Category *</label>
-              <select id="product-category" name="categoryId" required></select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="prod-desc">Description</label>
-            <textarea id="prod-desc" name="description" rows="3"></textarea>
-          </div>
-          <div class="form-row form-row-3">
-            <div class="form-group">
-              <label for="prod-pack-qty">Pack quantity *</label>
-              <input type="number" id="prod-pack-qty" name="packQuantity" required min="1" placeholder="1000" />
-              <span class="field-hint">e.g. 1000</span>
-            </div>
-            <div class="form-group">
-              <label for="prod-pack-unit">Unit *</label>
-              <input type="text" id="prod-pack-unit" name="packUnit" required placeholder="bag" value="bag" />
-              <span class="field-hint">e.g. bag, piece, box</span>
-            </div>
-            <div class="form-group">
-              <label for="prod-price">Price (IQD) *</label>
-              <input type="number" id="prod-price" name="price" required min="0" placeholder="345" />
-              <span class="field-hint">Price per unit shown as “by 345 IQD”</span>
-            </div>
-          </div>
-          <p class="quantity-preview" id="quantity-preview">Preview: 1000 bag by 345 IQD</p>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="prod-stock">Stock *</label>
-              <input type="number" id="prod-stock" name="stock" required min="0" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="prod-main-image">Main image *</label>
-            <input type="file" id="prod-main-image" name="mainImage" accept="image/*" />
-            <div class="image-preview-row" id="main-image-preview"></div>
-          </div>
-          <div class="form-group">
-            <label for="prod-gallery-images">Gallery images <span class="label-muted">(up to 15)</span></label>
-            <input type="file" id="prod-gallery-images" name="galleryImages" accept="image/*" multiple />
-            <span class="field-hint" id="gallery-hint">0 / 15 gallery images selected</span>
-            <div class="image-preview-grid" id="gallery-preview"></div>
-          </div>
-          <input type="hidden" name="imageUrl" value="" />
-          <input type="hidden" name="galleryUrls" value="[]" />
-          <div class="admin-modal-footer">
-            <button type="button" class="btn btn-outline" id="product-form-cancel">Cancel</button>
-            <button type="submit" class="btn btn-primary btn-3d">Add Product</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
     <section id="section-orders" class="admin-section">
-      <div class="admin-panel glass-card">
+      <div class="admin-panel glass-card admin-panel-relative">
         <h3>All Orders</h3>
-        <div class="admin-table-wrap">
+        <div class="state-message loading-state" id="orders-loading" role="status">
+          <span class="loading-spinner" aria-hidden="true"></span>
+          <p>Loading orders…</p>
+        </div>
+        <div class="state-message error-state admin-alert" id="orders-error" hidden role="alert">
+          <p>Could not load orders.</p>
+          <button type="button" class="btn btn-sm btn-outline" id="orders-retry">Try again</button>
+        </div>
+        <div class="state-message empty-state" id="orders-empty" hidden role="status">
+          <p>No orders yet.</p>
+        </div>
+        <div class="admin-table-wrap" id="orders-table-wrap" hidden>
           <table class="admin-table">
             <thead>
               <tr>
@@ -213,10 +132,5 @@
   </main>
 
   <script type="module" src="js/admin-dashboard.js"></script>
-  <script type="module">
-    document.getElementById("menu-toggle")?.addEventListener("click", () => {
-      document.getElementById("admin-sidebar")?.classList.toggle("open");
-    });
-  </script>
 </body>
 </html>

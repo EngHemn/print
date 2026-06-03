@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Form | Admin | Shopping Bag</title>
+  <link rel="icon" href="images/logo.png" type="image/png" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-brand">
+      <img src="images/logo.png" alt="Shopping Bag" />
+      <span class="gradient-text">Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="admin-dashboard.html" class="sidebar-link" data-page="dashboard">📊 Dashboard</a>
+      <a href="admin-dashboard.html#categories" class="sidebar-link" data-page="categories">📁 Categories</a>
+      <a href="admin-products.html" class="sidebar-link active" data-page="products">🛍️ Products</a>
+      <a href="admin-dashboard.html#orders" class="sidebar-link" data-page="orders">📦 Orders</a>
+    </nav>
+    <button class="btn btn-outline btn-sm" id="logout-btn">Logout</button>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-start">
+        <button class="admin-menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button>
+        <a href="admin-products.html" class="admin-back-link" aria-label="Back to products">←</a>
+        <h2 id="page-title">Add Product</h2>
+      </div>
+    </div>
+
+    <div class="admin-panel glass-card admin-panel-relative admin-form-page">
+      <div class="state-message error-state admin-alert" id="form-error" hidden role="alert">
+        <p></p>
+        <button type="button" class="btn btn-sm btn-outline" id="form-retry">Try again</button>
+      </div>
+
+      <div class="form-page-loading" id="form-loading" hidden role="status">
+        <span class="loading-spinner" aria-hidden="true"></span>
+        <p>Loading…</p>
+      </div>
+
+      <h3 id="prod-form-title">Add Product</h3>
+      <form id="product-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prod-name">Name *</label>
+            <input type="text" id="prod-name" name="name" required />
+          </div>
+          <div class="form-group">
+            <label>Category *</label>
+            <div id="product-category-dropdown"></div>
+            <input type="hidden" name="categoryId" value="" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="prod-desc">Description</label>
+          <textarea id="prod-desc" name="description" rows="3"></textarea>
+        </div>
+        <div class="form-row form-row-3">
+          <div class="form-group">
+            <label for="prod-pack-qty">Pack quantity *</label>
+            <input type="number" id="prod-pack-qty" name="packQuantity" required min="1" placeholder="1000" />
+            <span class="field-hint">e.g. 1000</span>
+          </div>
+          <div class="form-group">
+            <label for="prod-pack-unit">Unit *</label>
+            <input type="text" id="prod-pack-unit" name="packUnit" required placeholder="bag" value="bag" />
+            <span class="field-hint">e.g. bag, piece, box</span>
+          </div>
+          <div class="form-group">
+            <label for="prod-price">Price (IQD) *</label>
+            <input type="number" id="prod-price" name="price" required min="0" placeholder="345" />
+          </div>
+        </div>
+        <p class="quantity-preview" id="quantity-preview">Preview: —</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prod-stock">Stock *</label>
+            <input type="number" id="prod-stock" name="stock" required min="0" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="prod-main-image">Main image *</label>
+          <input type="file" id="prod-main-image" name="mainImage" accept="image/*" />
+          <div class="image-preview-row" id="main-image-preview"></div>
+        </div>
+        <div class="form-group">
+          <label for="prod-gallery-images">Gallery images <span class="label-muted">(up to 15)</span></label>
+          <input type="file" id="prod-gallery-images" name="galleryImages" accept="image/*" multiple />
+          <span class="field-hint" id="gallery-hint">0 / 15 gallery images</span>
+          <div class="image-preview-grid" id="gallery-preview"></div>
+        </div>
+        <input type="hidden" name="imageUrl" value="" />
+        <input type="hidden" name="galleryUrls" value="[]" />
+        <div class="form-page-footer">
+          <a href="admin-products.html" class="btn btn-outline">Cancel</a>
+          <button type="submit" class="btn btn-primary btn-3d">Add Product</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script type="module" src="js/admin-product-form.js"></script>
+</body>
+</html>

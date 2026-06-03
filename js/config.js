@@ -13,14 +13,6 @@ export const COMPANY = {
 
 export const ADMIN_PASSWORD = "amena";
 
-export const DEFAULT_CATEGORIES = [
-  { name: "Shopping Bags", slug: "shopping-bags" },
-  { name: "Luxury Bags", slug: "luxury-bags" },
-  { name: "Travel Bags", slug: "travel-bags" },
-  { name: "School Bags", slug: "school-bags" },
-  { name: "Accessories", slug: "accessories" },
-];
-
 export function formatPrice(price) {
   return new Intl.NumberFormat("en-IQ", {
     style: "currency",

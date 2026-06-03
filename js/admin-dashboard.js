@@ -24,21 +24,44 @@ const sections = {
   orders: document.getElementById("section-orders"),
 };
 
-const HASH_SECTIONS = { categories: "categories", orders: "orders" };
+const DASHBOARD_SECTIONS = ["dashboard", "categories", "orders"];
+
+function resolveSection(name) {
+  return DASHBOARD_SECTIONS.includes(name) ? name : "dashboard";
+}
+
+function closeSidebar() {
+  document.getElementById("admin-sidebar")?.classList.remove("open");
+}
 
 function showSection(name) {
-  const section = HASH_SECTIONS[name] ? name : "dashboard";
+  const section = resolveSection(name);
   Object.entries(sections).forEach(([key, el]) => {
     el?.classList.toggle("active", key === section);
   });
   document.querySelectorAll(".sidebar-link").forEach((link) => {
     link.classList.toggle("active", link.dataset.page === section);
   });
-  if (section !== "dashboard" && HASH_SECTIONS[section]) {
-    history.replaceState(null, "", `#${section}`);
-  } else if (section === "dashboard") {
-    history.replaceState(null, "", window.location.pathname);
-  }
+  const base = window.location.pathname.split("/").pop() || "admin-dashboard.html";
+  const nextHash = section === "dashboard" ? "" : `#${section}`;
+  history.replaceState(null, "", `${base}${nextHash}`);
+}
+
+function initDashboardSidebar() {
+  document.querySelectorAll(".sidebar-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      const page = link.dataset.page;
+      if (page === "products") {
+        closeSidebar();
+        return;
+      }
+      if (!DASHBOARD_SECTIONS.includes(page)) return;
+
+      e.preventDefault();
+      showSection(page);
+      closeSidebar();
+    });
+  });
 }
 
 function setListState(prefix, type, message) {
@@ -206,17 +229,17 @@ async function handleCategorySubmit(e) {
 
 function initHashRouting() {
   const hash = window.location.hash.replace("#", "");
-  if (HASH_SECTIONS[hash]) showSection(hash);
-  else showSection("dashboard");
+  showSection(hash || "dashboard");
 
   window.addEventListener("hashchange", () => {
     const h = window.location.hash.replace("#", "");
-    showSection(HASH_SECTIONS[h] ? h : "dashboard");
+    showSection(h || "dashboard");
   });
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
   initAdminLayout("dashboard");
+  initDashboardSidebar();
   initHashRouting();
 
   document.getElementById("category-form")?.addEventListener("submit", handleCategorySubmit);

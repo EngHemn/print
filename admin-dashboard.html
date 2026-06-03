@@ -98,6 +98,19 @@
     </section>
 
     <section id="section-orders" class="admin-section">
+      <div class="products-toolbar glass-card">
+        <div class="products-toolbar-filters">
+          <div class="form-group products-search-group">
+            <label for="order-search" class="sr-only">Search orders</label>
+            <input type="search" id="order-search" placeholder="Search by customer name…" autocomplete="off" />
+          </div>
+          <div class="form-group products-filter-dropdown">
+            <label for="order-filter-dropdown" class="sr-only">Filter by status</label>
+            <div id="order-filter-dropdown"></div>
+          </div>
+        </div>
+      </div>
+
       <div class="admin-panel glass-card admin-panel-relative">
         <h3>All Orders</h3>
         <div class="state-message loading-state" id="orders-loading" role="status">
@@ -119,9 +132,9 @@
                 <th>Phone</th>
                 <th>Address</th>
                 <th>Total</th>
-                <th>Products</th>
                 <th>Status</th>
                 <th>Date</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="orders-table"></tbody>

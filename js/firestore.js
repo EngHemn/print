@@ -116,6 +116,11 @@ export async function updateOrderStatus(id, status) {
   await updateDoc(doc(db, "orders", id), { status });
 }
 
+export async function getOrderById(id) {
+  const snap = await getDoc(doc(db, "orders", id));
+  return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+}
+
 export async function addContact(data) {
   const ref = await addDoc(collection(db, "contacts"), {
     ...data,

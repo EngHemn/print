@@ -11,6 +11,7 @@ import {
   getStats,
 } from "./firestore.js";
 import { initAdminLayout } from "./admin-layout.js";
+import { initCustomDropdown } from "./admin-dropdown.js";
 import { showConfirm } from "./admin-confirm.js";
 import { ADMIN_MESSAGES } from "./admin-messages.js";
 import { applyPanelState } from "./admin-ui-states.js";
@@ -18,6 +19,10 @@ import { applyPanelState } from "./admin-ui-states.js";
 let categories = [];
 let orders = [];
 let editingCategoryId = null;
+let orderSearch = "";
+let orderStatusFilter = "";
+let ordersLoadError = false;
+let orderFilterDropdown = null;
 
 const sections = {
   dashboard: document.getElementById("section-dashboard"),
@@ -152,28 +157,86 @@ async function loadCategories() {
 
 async function loadOrders() {
   setListState("orders", "loading");
+  ordersLoadError = false;
 
   try {
     orders = await fetchOrders();
-    const tbody = document.getElementById("orders-table");
-    if (!tbody) return;
+    initOrderFilterDropdown();
+    renderOrdersTable();
+  } catch (err) {
+    console.error("[Admin] Orders failed:", err);
+    ordersLoadError = true;
+    setListState("orders", "error", ADMIN_MESSAGES.ordersError);
+    showToast(ADMIN_MESSAGES.ordersError, "error");
+  }
+}
 
-    if (!orders.length) {
-      setListState("orders", "empty", ADMIN_MESSAGES.ordersEmpty);
-      tbody.innerHTML = "";
-      return;
-    }
+function getFilteredOrders() {
+  const search = orderSearch.trim().toLowerCase();
+  const status = orderStatusFilter;
 
-    setListState("orders", "data");
-    tbody.innerHTML = orders
-      .map(
-        (o) => `
+  return orders.filter((o) => {
+    const matchSearch =
+      !search || (o.fullName || "").toLowerCase().includes(search);
+    const matchStatus = !status || o.status === status;
+    return matchSearch && matchStatus;
+  });
+}
+
+function buildOrderFilterOptions() {
+  return [
+    { value: "", label: "All statuses" },
+    { value: "Pending", label: "Pending" },
+    { value: "Processing", label: "Processing" },
+    { value: "Delivered", label: "Delivered" },
+  ];
+}
+
+function initOrderFilterDropdown() {
+  const el = document.getElementById("order-filter-dropdown");
+  if (!el) return;
+  orderFilterDropdown = initCustomDropdown(el, buildOrderFilterOptions(), {
+    value: orderStatusFilter,
+    placeholder: "All statuses",
+    onChange: (value) => {
+      orderStatusFilter = value;
+      renderOrdersTable();
+    },
+  });
+}
+
+function formatOrderAddress(order) {
+  const parts = [order.city, order.street].filter(Boolean);
+  return parts.length ? parts.join(", ") : "—";
+}
+
+function renderOrdersTable() {
+  const tbody = document.getElementById("orders-table");
+  if (!tbody || ordersLoadError) return;
+
+  if (!orders.length) {
+    setListState("orders", "empty", ADMIN_MESSAGES.ordersEmpty);
+    tbody.innerHTML = "";
+    return;
+  }
+
+  const filtered = getFilteredOrders();
+
+  if (!filtered.length) {
+    tbody.innerHTML = "";
+    setListState("orders", "empty", ADMIN_MESSAGES.ordersNotFound);
+    return;
+  }
+
+  setListState("orders", "data");
+  tbody.innerHTML = filtered
+    .map(
+      (o) => `
         <tr>
           <td>${escapeHtml(o.fullName)}</td>
           <td>${escapeHtml(o.phone)}</td>
-          <td>${escapeHtml(o.city)}, ${escapeHtml(o.street)}</td>
+          <td>${escapeHtml(formatOrderAddress(o))}</td>
           <td>${formatPrice(o.total)}</td>
-          <td>${(o.products || []).map((p) => escapeHtml(p.name)).join(", ")}</td>
           <td>
             <select class="order-status" data-id="${o.id}">
               ${["Pending", "Processing", "Delivered"]
@@ -185,15 +248,13 @@ async function loadOrders() {
             </select>
           </td>
           <td>${formatDate(o.createdAt)}</td>
+          <td class="table-actions">
+            <a href="admin-order-view.html?id=${encodeURIComponent(o.id)}" class="btn btn-sm btn-outline">View</a>
+          </td>
         </tr>
       `
-      )
-      .join("");
-  } catch (err) {
-    console.error("[Admin] Orders failed:", err);
-    setListState("orders", "error", ADMIN_MESSAGES.ordersError);
-    showToast(ADMIN_MESSAGES.ordersError, "error");
-  }
+    )
+    .join("");
 }
 
 async function handleCategorySubmit(e) {
@@ -250,6 +311,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("stats-retry")?.addEventListener("click", loadStats);
   document.getElementById("categories-retry")?.addEventListener("click", loadCategories);
   document.getElementById("orders-retry")?.addEventListener("click", loadOrders);
+
+  document.getElementById("order-search")?.addEventListener("input", (e) => {
+    orderSearch = e.target.value;
+    if (!ordersLoadError && orders.length) renderOrdersTable();
+  });
 
   document.getElementById("categories-table")?.addEventListener("click", async (e) => {
     const editBtn = e.target.closest(".edit-cat");

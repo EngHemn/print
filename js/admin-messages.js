@@ -6,6 +6,7 @@ export const ADMIN_MESSAGES = {
   categoriesEmpty: "No categories yet. Create a category first.",
   categoriesError: "Could not load categories.",
   ordersEmpty: "No orders yet.",
+  ordersNotFound: "No orders match your search or status filter.",
   ordersError: "Could not load orders.",
   statsError: "Could not load dashboard statistics.",
   deleteProductTitle: "Delete product?",

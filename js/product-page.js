@@ -49,7 +49,7 @@ async function initProductPage() {
       const qty = Number(qtyInput?.value) || 1;
       addToCart(product, qty);
       showToast(`${product.name} added to cart`);
-      window.location.href = "cart.html";
+      window.location.href = "shop.html";
     });
   } catch (err) {
     console.error("[Product] Load failed:", err);

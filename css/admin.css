@@ -687,3 +687,50 @@ body.no-scroll {
   color: var(--text-muted);
   margin: 0;
 }
+
+.admin-order-view {
+  align-items: start;
+}
+
+.admin-order-view:not(.admin-order-view--has-location) {
+  grid-template-columns: 1fr;
+}
+
+.admin-order-view-details {
+  max-width: 960px;
+}
+
+.admin-order-view--has-location .admin-order-view-details {
+  max-width: none;
+}
+
+.admin-order-location {
+  padding: 1.25rem;
+}
+
+.admin-order-map {
+  width: 100%;
+  height: 280px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-glass);
+  z-index: 0;
+}
+
+.admin-order-coords {
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.admin-order-coords a {
+  color: var(--accent);
+}
+
+.admin-order-products-title {
+  margin: 1.5rem 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+.admin-order-view .admin-table-wrap {
+  margin-bottom: 1.5rem;
+}

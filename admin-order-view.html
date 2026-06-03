@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View Order | Admin | Shopping Bag</title>
+  <link rel="icon" href="images/logo.png" type="image/png" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-brand">
+      <img src="images/logo.png" alt="Shopping Bag" />
+      <span class="gradient-text">Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="admin-dashboard.html" class="sidebar-link" data-page="dashboard">📊 Dashboard</a>
+      <a href="admin-dashboard.html#categories" class="sidebar-link" data-page="categories">📁 Categories</a>
+      <a href="admin-products.html" class="sidebar-link" data-page="products">🛍️ Products</a>
+      <a href="admin-dashboard.html#orders" class="sidebar-link active" data-page="orders">📦 Orders</a>
+    </nav>
+    <button class="btn btn-outline btn-sm" id="logout-btn">Logout</button>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-start">
+        <button class="admin-menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button>
+        <a href="admin-dashboard.html#orders" class="admin-back-link" aria-label="Back to orders">←</a>
+        <h2>View Order</h2>
+      </div>
+    </div>
+
+    <div class="admin-panel glass-card admin-panel-relative" id="admin-order-view-root">
+      <div class="state-message loading-state" id="admin-order-view-loading" role="status">
+        <span class="loading-spinner" aria-hidden="true"></span>
+        <p>Loading order…</p>
+      </div>
+      <div class="state-message error-state admin-alert" id="admin-order-view-error" hidden role="alert">
+        <p>Could not load order.</p>
+        <button type="button" class="btn btn-sm btn-outline" id="admin-order-view-retry">Try again</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="js/admin-order-view.js"></script>
+</body>
+</html>

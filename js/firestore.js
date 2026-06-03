@@ -12,18 +12,30 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { db } from "../firebase.js";
 
+async function fetchCollectionSorted(name) {
+  try {
+    const snap = await getDocs(
+      query(collection(db, name), orderBy("createdAt", "desc"))
+    );
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  } catch {
+    const snap = await getDocs(collection(db, name));
+    return snap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => {
+        const aTime = a.createdAt?.seconds ?? 0;
+        const bTime = b.createdAt?.seconds ?? 0;
+        return bTime - aTime;
+      });
+  }
+}
+
 export async function fetchCategories() {
-  const snap = await getDocs(
-    query(collection(db, "categories"), orderBy("createdAt", "desc"))
-  );
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  return fetchCollectionSorted("categories");
 }
 
 export async function fetchProducts() {
-  const snap = await getDocs(
-    query(collection(db, "products"), orderBy("createdAt", "desc"))
-  );
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  return fetchCollectionSorted("products");
 }
 
 export async function fetchOrders() {

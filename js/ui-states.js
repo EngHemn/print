@@ -3,6 +3,7 @@ export const MESSAGES = {
   categoriesEmpty: "No categories available yet.",
   productsEmpty: "No products available yet.",
   productsNotFound: "No products match your search or filter.",
+  productsInCategoryEmpty: "No products in this category yet.",
   categoriesError: "Could not load categories. Please refresh the page.",
   productsError: "Could not load products. Please refresh the page.",
 };

@@ -14,9 +14,17 @@ import { showLoading, showEmpty, showError, MESSAGES } from "./ui-states.js";
 let allProducts = [];
 let allCategories = [];
 let selectedCategoryId = "";
+let dataLoaded = false;
+let productsLoadFailed = false;
+let categoriesLoadFailed = false;
+
+function normalizeCategoryId(value) {
+  if (value == null || value === "" || value === "all") return "";
+  return String(value).trim();
+}
 
 function renderCategoryFilters(container) {
-  if (!container) return;
+  if (!container || categoriesLoadFailed) return;
 
   if (!allCategories.length) {
     showEmpty(container, MESSAGES.categoriesEmpty);
@@ -45,6 +53,13 @@ function renderCategoryFilters(container) {
 }
 
 function renderProducts(grid, searchInput) {
+  if (!grid || productsLoadFailed) return;
+
+  if (!dataLoaded) {
+    showLoading(grid);
+    return;
+  }
+
   if (!allProducts.length) {
     showEmpty(grid, MESSAGES.productsEmpty);
     return;
@@ -56,7 +71,10 @@ function renderProducts(grid, searchInput) {
   });
 
   if (!filtered.length) {
-    showEmpty(grid, MESSAGES.productsNotFound);
+    const message = selectedCategoryId
+      ? MESSAGES.productsInCategoryEmpty
+      : MESSAGES.productsNotFound;
+    showEmpty(grid, message);
     return;
   }
 
@@ -64,11 +82,13 @@ function renderProducts(grid, searchInput) {
 }
 
 function setSelectedCategory(categoryId, categoriesList, grid, searchInput) {
-  selectedCategoryId = categoryId;
+  if (!dataLoaded) return;
+
+  selectedCategoryId = normalizeCategoryId(categoryId);
 
   const url = new URL(window.location.href);
-  if (categoryId) {
-    url.searchParams.set("category", categoryId);
+  if (selectedCategoryId) {
+    url.searchParams.set("category", selectedCategoryId);
   } else {
     url.searchParams.delete("category");
   }
@@ -83,34 +103,57 @@ async function initShop() {
   const searchInput = document.getElementById("search-input");
   const categoriesList = document.getElementById("shop-categories-list");
   const params = new URLSearchParams(window.location.search);
-  selectedCategoryId = params.get("category") || "";
+  selectedCategoryId = normalizeCategoryId(params.get("category"));
 
   showLoading(categoriesList);
   showLoading(grid);
 
-  try {
-    [allProducts, allCategories] = await Promise.all([
-      fetchProducts(),
-      fetchCategories(),
-    ]);
-  } catch {
-    showError(categoriesList, MESSAGES.categoriesError);
+  const [productsResult, categoriesResult] = await Promise.allSettled([
+    fetchProducts(),
+    fetchCategories(),
+  ]);
+
+  if (productsResult.status === "fulfilled") {
+    allProducts = productsResult.value;
+    productsLoadFailed = false;
+  } else {
+    allProducts = [];
+    productsLoadFailed = true;
     showError(grid, MESSAGES.productsError);
-    return;
   }
+
+  if (categoriesResult.status === "fulfilled") {
+    allCategories = categoriesResult.value;
+    categoriesLoadFailed = false;
+  } else {
+    allCategories = [];
+    categoriesLoadFailed = true;
+    showError(categoriesList, MESSAGES.categoriesError);
+  }
+
+  dataLoaded = true;
 
   if (selectedCategoryId && !allCategories.some((c) => c.id === selectedCategoryId)) {
     selectedCategoryId = "";
   }
 
-  renderCategoryFilters(categoriesList);
-  renderProducts(grid, searchInput);
-  bindProductEvents(allProducts, grid);
+  if (!categoriesLoadFailed) {
+    renderCategoryFilters(categoriesList);
+  }
+
+  if (!productsLoadFailed) {
+    renderProducts(grid, searchInput);
+    bindProductEvents(allProducts, grid);
+  }
 
   categoriesList?.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-category]");
+    const btn = e.target.closest(".shop-category-card");
     if (!btn) return;
-    setSelectedCategory(btn.dataset.category, categoriesList, grid, searchInput);
+
+    const filterId = btn.getAttribute("data-filter");
+    if (filterId === null) return;
+
+    setSelectedCategory(filterId, categoriesList, grid, searchInput);
   });
 
   searchInput?.addEventListener(

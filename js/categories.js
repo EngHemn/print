@@ -25,12 +25,12 @@ export function renderCategoryCard(category, options = {}) {
     `;
   }
 
-  const categoryId = isAll ? "" : category.id;
+  const filterId = isAll ? "all" : category.id;
   return `
     <button
       type="button"
       class="category-card shop-category-card card-3d glass-card${activeClass}"
-      data-category="${categoryId}"
+      data-filter="${filterId}"
       aria-pressed="${active}"
     >
       <div class="category-image">

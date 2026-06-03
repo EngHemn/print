@@ -124,13 +124,20 @@ export function openProductModal(product) {
   };
 }
 
+export function getProductCategoryId(product) {
+  const id = product?.categoryId ?? product?.category ?? "";
+  return id == null ? "" : String(id).trim();
+}
+
 export function filterProducts(products, { search = "", categoryId = "" } = {}) {
+  const cat = categoryId == null || categoryId === "" ? "" : String(categoryId).trim();
+
   return products.filter((p) => {
     const matchSearch =
       !search ||
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       (p.description || "").toLowerCase().includes(search.toLowerCase());
-    const matchCategory = !categoryId || p.categoryId === categoryId;
+    const matchCategory = !cat || getProductCategoryId(p) === cat;
     return matchSearch && matchCategory;
   });
 }

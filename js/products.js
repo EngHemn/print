@@ -134,3 +134,5 @@ export function filterProducts(products, { search = "", categoryId = "" } = {}) 
     return matchSearch && matchCategory;
   });
 }
+
+export { renderCategoryCard } from "./categories.js";

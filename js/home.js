@@ -1,11 +1,8 @@
 import { initLayout } from "./cart.js";
 import { initAllAnimations } from "./animations.js";
 import { fetchCategories, fetchProducts } from "./firestore.js";
-import {
-  renderProductCard,
-  renderCategoryCard,
-  bindProductEvents,
-} from "./products.js";
+import { renderProductCard, bindProductEvents } from "./products.js";
+import { renderCategoryCard } from "./categories.js";
 import { showLoading, showEmpty, showError, MESSAGES } from "./ui-states.js";
 
 const HOME_PRODUCT_LIMIT = 8;

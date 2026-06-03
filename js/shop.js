@@ -3,11 +3,11 @@ import { initAllAnimations } from "./animations.js";
 import { fetchCategories, fetchProducts } from "./firestore.js";
 import {
   renderProductCard,
-  renderCategoryCard,
   bindProductEvents,
   filterProducts,
   openProductModal,
 } from "./products.js";
+import { renderCategoryCard } from "./categories.js";
 import { debounce } from "./config.js";
 import { showLoading, showEmpty, showError, MESSAGES } from "./ui-states.js";
 
@@ -37,6 +37,11 @@ function renderCategoryFilters(container) {
   ];
 
   container.innerHTML = cards.join("");
+
+  if (selectedCategoryId) {
+    const activeCard = container.querySelector(".shop-category-card.active");
+    activeCard?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }
 }
 
 function renderProducts(grid, searchInput) {

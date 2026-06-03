@@ -1,4 +1,14 @@
 import { formatPrice, escapeHtml } from "./config.js";
+
+export function formatQuantityLabel(product) {
+  const qty = product.packQuantity ?? product.quantity;
+  const unit = product.packUnit || "bag";
+  if (qty != null && qty !== "") {
+    return `${qty} ${unit} by ${formatPrice(product.price)}`;
+  }
+  if (product.quantityLabel) return product.quantityLabel;
+  return formatPrice(product.price);
+}
 import {
   addToCart,
   toggleWishlist,
@@ -24,6 +34,7 @@ export function renderProductCard(product, options = {}) {
       </div>
       <div class="product-info">
         <h3 class="product-name">${escapeHtml(product.name)}</h3>
+        <p class="product-quantity-label">${escapeHtml(formatQuantityLabel(product))}</p>
         <p class="product-price gradient-text">${formatPrice(product.price)}</p>
         ${showAddToCart ? `<button class="btn btn-primary btn-3d btn-sm add-to-cart" data-add="${product.id}">Add To Cart</button>` : ""}
       </div>
@@ -75,15 +86,31 @@ export function openProductModal(product) {
     document.body.appendChild(modal);
   }
 
+  const gallery = [
+    product.image,
+    ...(Array.isArray(product.images) ? product.images : []),
+  ].filter(Boolean);
+  const uniqueImages = [...new Set(gallery)];
+
   const content = modal.querySelector(".modal-content");
   content.innerHTML = `
     <button class="modal-close" aria-label="Close">&times;</button>
     <div class="modal-grid">
       <div class="modal-image">
-        <img src="${product.image || "images/placeholder-bag.svg"}" alt="${escapeHtml(product.name)}" />
+        <img src="${uniqueImages[0] || "images/placeholder-bag.svg"}" alt="${escapeHtml(product.name)}" class="modal-main-img" />
+        ${uniqueImages.length > 1 ? `
+          <div class="modal-gallery-thumbs">
+            ${uniqueImages.map((url, i) => `
+              <button type="button" class="modal-thumb ${i === 0 ? "active" : ""}" data-img="${escapeHtml(url)}">
+                <img src="${url}" alt="" />
+              </button>
+            `).join("")}
+          </div>
+        ` : ""}
       </div>
       <div class="modal-details">
         <h2>${escapeHtml(product.name)}</h2>
+        <p class="modal-quantity">${escapeHtml(formatQuantityLabel(product))}</p>
         <p class="modal-price gradient-text">${formatPrice(product.price)}</p>
         <p class="modal-desc">${escapeHtml(product.description || "Premium quality bag from Shopping Bag Erbil.")}</p>
         <p class="modal-stock">In stock: ${product.stock ?? "—"}</p>
@@ -96,6 +123,15 @@ export function openProductModal(product) {
       </div>
     </div>
   `;
+
+  content.querySelectorAll(".modal-thumb").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const mainImg = content.querySelector(".modal-main-img");
+      if (mainImg) mainImg.src = btn.dataset.img;
+      content.querySelectorAll(".modal-thumb").forEach((t) => t.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  });
 
   modal.classList.add("open");
   document.body.classList.add("no-scroll");

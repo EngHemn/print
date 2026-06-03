@@ -72,22 +72,30 @@ export async function deleteCategory(id) {
   await deleteDoc(doc(db, "categories", id));
 }
 
-export async function addProduct(data) {
-  const ref = await addDoc(collection(db, "products"), {
+function normalizeProductData(data) {
+  const images = Array.isArray(data.images)
+    ? data.images.filter(Boolean).slice(0, 15)
+    : [];
+  return {
     ...data,
     price: Number(data.price),
     stock: Number(data.stock),
+    packQuantity: Number(data.packQuantity) || 0,
+    packUnit: (data.packUnit || "bag").trim(),
+    images,
+  };
+}
+
+export async function addProduct(data) {
+  const ref = await addDoc(collection(db, "products"), {
+    ...normalizeProductData(data),
     createdAt: serverTimestamp(),
   });
   return ref.id;
 }
 
 export async function updateProduct(id, data) {
-  await updateDoc(doc(db, "products", id), {
-    ...data,
-    price: Number(data.price),
-    stock: Number(data.stock),
-  });
+  await updateDoc(doc(db, "products", id), normalizeProductData(data));
 }
 
 export async function deleteProduct(id) {

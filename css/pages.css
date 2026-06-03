@@ -119,9 +119,16 @@
 }
 
 .category-card {
+  display: block;
   padding: 1.5rem 1rem;
   text-align: center;
   color: inherit;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
 }
 
 .category-image {
@@ -148,6 +155,11 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 1.5rem;
+}
+
+.section-cta {
+  text-align: center;
+  margin-top: 2.5rem;
 }
 
 .cta-section {

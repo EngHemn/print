@@ -22,6 +22,7 @@ async function initHome() {
       fetchCategories(),
       fetchProducts(),
     ]);
+    console.log("[Home] Loaded:", { categories: categories.length, products: products.length });
 
     if (categoriesGrid) {
       if (!categories.length) {
@@ -37,7 +38,8 @@ async function initHome() {
       homeProducts = products;
       renderHomeProducts(productsGrid);
     }
-  } catch {
+  } catch (err) {
+    console.error("[Home] Failed to load data:", err);
     showError(categoriesGrid, MESSAGES.categoriesError);
     showError(productsGrid, MESSAGES.productsError);
   }

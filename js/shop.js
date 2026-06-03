@@ -74,10 +74,16 @@ function renderProducts(grid, searchInput) {
     const message = selectedCategoryId
       ? MESSAGES.productsInCategoryEmpty
       : MESSAGES.productsNotFound;
+    console.log("[Shop] No products to show:", {
+      filter: selectedCategoryId || "all",
+      search: searchInput?.value || "",
+      total: allProducts.length,
+    });
     showEmpty(grid, message);
     return;
   }
 
+  console.log("[Shop] Showing products:", filtered.length, "of", allProducts.length);
   grid.innerHTML = filtered.map((p) => renderProductCard(p)).join("");
 }
 
@@ -85,6 +91,7 @@ function setSelectedCategory(categoryId, categoriesList, grid, searchInput) {
   if (!dataLoaded) return;
 
   selectedCategoryId = normalizeCategoryId(categoryId);
+  console.log("[Shop] Category selected:", selectedCategoryId || "all");
 
   const url = new URL(window.location.href);
   if (selectedCategoryId) {
@@ -116,22 +123,27 @@ async function initShop() {
   if (productsResult.status === "fulfilled") {
     allProducts = productsResult.value;
     productsLoadFailed = false;
+    console.log("[Shop] Products loaded:", allProducts.length);
   } else {
     allProducts = [];
     productsLoadFailed = true;
+    console.error("[Shop] Failed to load products:", productsResult.reason);
     showError(grid, MESSAGES.productsError);
   }
 
   if (categoriesResult.status === "fulfilled") {
     allCategories = categoriesResult.value;
     categoriesLoadFailed = false;
+    console.log("[Shop] Categories loaded:", allCategories.length);
   } else {
     allCategories = [];
     categoriesLoadFailed = true;
+    console.error("[Shop] Failed to load categories:", categoriesResult.reason);
     showError(categoriesList, MESSAGES.categoriesError);
   }
 
   dataLoaded = true;
+  console.log("[Shop] Ready — filter:", selectedCategoryId || "all");
 
   if (selectedCategoryId && !allCategories.some((c) => c.id === selectedCategoryId)) {
     selectedCategoryId = "";

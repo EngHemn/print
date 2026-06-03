@@ -17,16 +17,29 @@ async function fetchCollectionSorted(name) {
     const snap = await getDocs(
       query(collection(db, name), orderBy("createdAt", "desc"))
     );
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-  } catch {
-    const snap = await getDocs(collection(db, name));
-    return snap.docs
-      .map((d) => ({ id: d.id, ...d.data() }))
-      .sort((a, b) => {
-        const aTime = a.createdAt?.seconds ?? 0;
-        const bTime = b.createdAt?.seconds ?? 0;
-        return bTime - aTime;
-      });
+    const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    console.log(`[Firestore] ${name} loaded (sorted):`, items.length);
+    return items;
+  } catch (orderError) {
+    console.warn(
+      `[Firestore] ${name} orderBy failed, using fallback:`,
+      orderError
+    );
+    try {
+      const snap = await getDocs(collection(db, name));
+      const items = snap.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => {
+          const aTime = a.createdAt?.seconds ?? 0;
+          const bTime = b.createdAt?.seconds ?? 0;
+          return bTime - aTime;
+        });
+      console.log(`[Firestore] ${name} loaded (fallback):`, items.length);
+      return items;
+    } catch (fetchError) {
+      console.error(`[Firestore] Failed to fetch ${name}:`, fetchError);
+      throw fetchError;
+    }
   }
 }
 

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | Shopping Bag</title>
+  <link rel="icon" href="images/logo.png" type="image/png" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-brand">
+      <img src="images/logo.png" alt="Shopping Bag" />
+      <span class="gradient-text">Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-link active" data-section="dashboard">📊 Dashboard</button>
+      <button class="sidebar-link" data-section="categories">📁 Categories</button>
+      <button class="sidebar-link" data-section="products">🛍️ Products</button>
+      <button class="sidebar-link" data-section="orders">📦 Orders</button>
+    </nav>
+    <button class="btn btn-outline btn-sm" id="logout-btn">Logout</button>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <button class="admin-menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button>
+      <h2>Shopping Bag Dashboard</h2>
+    </div>
+
+    <section id="section-dashboard" class="admin-section active">
+      <div class="stats-grid">
+        <div class="stat-card glass-card card-3d">
+          <h4>Total Products</h4>
+          <div class="stat-value" id="stat-products">0</div>
+        </div>
+        <div class="stat-card glass-card card-3d">
+          <h4>Total Categories</h4>
+          <div class="stat-value" id="stat-categories">0</div>
+        </div>
+        <div class="stat-card glass-card card-3d">
+          <h4>Total Orders</h4>
+          <div class="stat-value" id="stat-orders">0</div>
+        </div>
+        <div class="stat-card glass-card card-3d">
+          <h4>Total Revenue</h4>
+          <div class="stat-value" id="stat-revenue">IQD 0</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-categories" class="admin-section">
+      <div class="admin-grid">
+        <div class="admin-panel glass-card">
+          <h3 id="cat-form-title">Add Category</h3>
+          <form id="category-form">
+            <div class="form-group">
+              <label for="cat-name">Name *</label>
+              <input type="text" id="cat-name" name="name" required />
+            </div>
+            <div class="form-group">
+              <label for="cat-image">Upload Image</label>
+              <input type="file" id="cat-image" name="image" accept="image/*" />
+            </div>
+            <input type="hidden" name="imageUrl" value="" />
+            <button type="submit" class="btn btn-primary btn-3d">Add Category</button>
+          </form>
+        </div>
+        <div class="admin-panel glass-card">
+          <h3>All Categories</h3>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr><th>Image</th><th>Name</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="categories-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-products" class="admin-section">
+      <div class="admin-panel glass-card" style="margin-bottom:2rem">
+        <h3 id="prod-form-title">Add Product</h3>
+        <form id="product-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prod-name">Name *</label>
+              <input type="text" id="prod-name" name="name" required />
+            </div>
+            <div class="form-group">
+              <label for="product-category">Category *</label>
+              <select id="product-category" name="categoryId" required></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="prod-desc">Description</label>
+            <textarea id="prod-desc" name="description"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prod-price">Price (IQD) *</label>
+              <input type="number" id="prod-price" name="price" required min="0" />
+            </div>
+            <div class="form-group">
+              <label for="prod-stock">Stock *</label>
+              <input type="number" id="prod-stock" name="stock" required min="0" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="prod-image">Upload Image</label>
+            <input type="file" id="prod-image" name="image" accept="image/*" />
+          </div>
+          <input type="hidden" name="imageUrl" value="" />
+          <button type="submit" class="btn btn-primary btn-3d">Add Product</button>
+        </form>
+      </div>
+      <div class="admin-panel glass-card">
+        <h3>All Products</h3>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Image</th><th>Name</th><th>Price</th><th>Stock</th><th>Category</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="products-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-orders" class="admin-section">
+      <div class="admin-panel glass-card">
+        <h3>All Orders</h3>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Total</th>
+                <th>Products</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/admin-dashboard.js"></script>
+  <script type="module">
+    document.getElementById("menu-toggle")?.addEventListener("click", () => {
+      document.getElementById("admin-sidebar")?.classList.toggle("open");
+    });
+  </script>
+</body>
+</html>

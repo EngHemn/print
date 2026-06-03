@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Shopping Bag services - Delivery, wholesale, custom printing, and bulk orders in Erbil." />
+  <title>Services | Shopping Bag</title>
+  <link rel="icon" href="images/logo.png" type="image/png" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <div id="site-header"></div>
+  <div id="cart-drawer"></div>
+
+  <main>
+    <section class="page-hero">
+      <div class="container fade-in">
+        <h1>Our <span class="gradient-text">Services</span></h1>
+        <p>Comprehensive bag solutions for individuals and businesses</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="services-grid">
+          <div class="service-card glass-card card-3d slide-up">
+            <h3>🚚 Product Delivery</h3>
+            <p>Fast and reliable delivery across Erbil and all Iraqi cities. We ensure your bags arrive safely and on time, every time.</p>
+          </div>
+          <div class="service-card glass-card card-3d slide-up">
+            <h3>🏪 Wholesale Orders</h3>
+            <p>Special pricing for retailers and businesses. Bulk quantities with premium quality bags at competitive wholesale rates.</p>
+          </div>
+          <div class="service-card glass-card card-3d slide-up">
+            <h3>🎨 Custom Bag Printing</h3>
+            <p>Personalize your bags with custom logos, designs, and branding. Perfect for businesses, events, and promotional campaigns.</p>
+          </div>
+          <div class="service-card glass-card card-3d slide-up">
+            <h3>📦 Bulk Orders</h3>
+            <p>Large quantity orders for organizations, schools, and events. Flexible options with dedicated support for your project.</p>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:3rem" class="fade-in">
+          <a href="contact.html" class="btn btn-primary btn-3d">Get In Touch</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script type="module">
+    import { initLayout } from "./js/cart.js";
+    import { initAllAnimations } from "./js/animations.js";
+    initLayout("services");
+    initAllAnimations();
+  </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login | Shopping Bag</title>
+    <link rel="icon" href="images/logo.png" type="image/png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <!-- url of the page is /admin-login.html -->
+  </head>
+  <body class="admin-login-page">
+    <div class="login-card glass-card fade-in">
+      <img src="images/logo.png" alt="Shopping Bag" class="logo" />
+      <h1>Admin <span class="gradient-text">Login</span></h1>
+      <p>Enter your password to access the dashboard</p>
+      <form id="admin-login-form">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            placeholder="Enter admin password"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary btn-3d btn-block">
+          Login
+        </button>
+      </form>
+      <p style="margin-top: 1.5rem">
+        <a
+          href="index.html"
+          style="color: var(--text-muted); font-size: 0.875rem"
+          >← Back to Store</a
+        >
+      </p>
+    </div>
+    <script type="module" src="js/admin-login.js"></script>
+  </body>
+</html>

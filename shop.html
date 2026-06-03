@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Shop premium shopping bags, luxury bags, travel bags and more at Shopping Bag Erbil." />
+  <title>Shop | Shopping Bag</title>
+  <link rel="icon" href="images/logo.png" type="image/png" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <div id="site-header"></div>
+  <div id="cart-drawer"></div>
+
+  <main>
+    <section class="page-hero">
+      <div class="container fade-in">
+        <h1>Our <span class="gradient-text">Shop</span></h1>
+        <p>Browse our complete collection of premium bags</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="shop-toolbar fade-in">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" id="search-input" placeholder="Search products..." aria-label="Search products" />
+          </div>
+          <select id="category-filter" class="filter-select" aria-label="Filter by category">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+        <div class="products-grid" id="shop-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script type="module" src="js/shop.js"></script>
+</body>
+</html>

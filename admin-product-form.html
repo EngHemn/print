@@ -59,28 +59,31 @@
           <label for="prod-desc">Description</label>
           <textarea id="prod-desc" name="description" rows="3"></textarea>
         </div>
-        <div class="form-row form-row-3">
+        <div class="form-row">
           <div class="form-group">
             <label for="prod-pack-qty">Pack quantity *</label>
             <input type="number" id="prod-pack-qty" name="packQuantity" required min="1" placeholder="1000" />
             <span class="field-hint">e.g. 1000</span>
           </div>
           <div class="form-group">
-            <label for="prod-pack-unit">Unit *</label>
-            <input type="text" id="prod-pack-unit" name="packUnit" required placeholder="bag" value="bag" />
-            <span class="field-hint">e.g. bag, piece, box</span>
-          </div>
-          <div class="form-group">
             <label for="prod-price">Price (IQD) *</label>
             <input type="number" id="prod-price" name="price" required min="0" placeholder="345" />
           </div>
-        </div>
-        <p class="quantity-preview" id="quantity-preview">Preview: —</p>
-        <div class="form-row">
           <div class="form-group">
             <label for="prod-stock">Stock *</label>
             <input type="number" id="prod-stock" name="stock" required min="0" />
           </div>
+        </div>
+        <p class="quantity-preview" id="quantity-preview">Preview: —</p>
+        <div class="form-group">
+          <label>Colors</label>
+          <div class="color-picker-row">
+            <input type="color" id="prod-color-picker" value="#ff8200" aria-label="Pick a color" />
+            <button type="button" class="btn btn-outline btn-sm" id="prod-add-color">+ Add color</button>
+            <span class="field-hint" id="colors-hint">0 / 12 colors</span>
+          </div>
+          <div class="color-swatches-edit" id="product-colors-list" role="list" aria-label="Product colors"></div>
+          <input type="hidden" name="colors" value="[]" />
         </div>
         <div class="form-group">
           <label for="prod-main-image">Main image *</label>
@@ -90,6 +93,7 @@
         <div class="form-group">
           <label for="prod-gallery-images">Gallery images <span class="label-muted">(up to 15)</span></label>
           <input type="file" id="prod-gallery-images" name="galleryImages" accept="image/*" multiple />
+          <span class="field-hint">You can pick images multiple times — each selection is added to the gallery.</span>
           <span class="field-hint" id="gallery-hint">0 / 15 gallery images</span>
           <div class="image-preview-grid" id="gallery-preview"></div>
         </div>

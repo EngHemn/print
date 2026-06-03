@@ -1,3 +1,6 @@
+/** Iraq WhatsApp — order messages after checkout */
+export const WHATSAPP_ORDER_NUMBER = "9647510445798";
+
 export const COMPANY = {
   name: "Shopping Bag",
   location: "Erbil, Iraq",

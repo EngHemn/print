@@ -2,6 +2,18 @@ import { COMPANY } from "./config.js";
 
 const CART_KEY = "shopping_bag_cart";
 
+function cartItemId(id) {
+  return id == null ? "" : String(id);
+}
+
+function productImage(product) {
+  return (
+    product.image ||
+    (Array.isArray(product.images) ? product.images[0] : "") ||
+    "images/placeholder-bag.svg"
+  );
+}
+
 export function getCart() {
   try {
     return JSON.parse(localStorage.getItem(CART_KEY)) || [];
@@ -30,16 +42,17 @@ export function updateCartCount() {
 
 export function addToCart(product, quantity = 1) {
   const cart = getCart();
-  const existing = cart.find((item) => item.id === product.id);
+  const id = cartItemId(product.id);
+  const existing = cart.find((item) => cartItemId(item.id) === id);
 
   if (existing) {
     existing.quantity += quantity;
   } else {
     cart.push({
-      id: product.id,
+      id,
       name: product.name,
       price: Number(product.price),
-      image: product.image,
+      image: productImage(product),
       quantity,
     });
   }
@@ -49,16 +62,21 @@ export function addToCart(product, quantity = 1) {
 }
 
 export function removeFromCart(productId) {
-  const cart = getCart().filter((item) => item.id !== productId);
+  const id = cartItemId(productId);
+  const cart = getCart().filter((item) => cartItemId(item.id) !== id);
   saveCart(cart);
   return cart;
 }
 
 export function updateQuantity(productId, quantity) {
+  if (quantity < 1) {
+    return removeFromCart(productId);
+  }
   const cart = getCart();
-  const item = cart.find((i) => i.id === productId);
+  const id = cartItemId(productId);
+  const item = cart.find((i) => cartItemId(i.id) === id);
   if (item) {
-    item.quantity = Math.max(1, quantity);
+    item.quantity = quantity;
     saveCart(cart);
   }
   return cart;
@@ -156,10 +174,10 @@ export function renderHeader(activePage = "") {
           <a href="shop.html" class="icon-btn" aria-label="Search shop">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           </a>
-          <button class="icon-btn cart-trigger" aria-label="Open cart">
+          <a href="cart.html" class="icon-btn" aria-label="View cart">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
             <span class="cart-badge" data-cart-count>0</span>
-          </button>
+          </a>
         </div>
       </div>
     </header>
@@ -216,38 +234,14 @@ export function renderFooter() {
   `;
 }
 
-export function renderCartDrawer() {
-  return `
-    <div class="cart-drawer-overlay"></div>
-    <aside class="cart-drawer" aria-label="Shopping cart">
-      <div class="cart-drawer-header">
-        <h3>Your Cart</h3>
-        <button class="cart-drawer-close" aria-label="Close cart">&times;</button>
-      </div>
-      <div class="cart-drawer-body" data-cart-drawer-items></div>
-      <div class="cart-drawer-footer">
-        <div class="cart-drawer-total">
-          <span>Total</span>
-          <strong data-cart-drawer-total>IQD 0</strong>
-        </div>
-        <a href="cart.html" class="btn btn-primary btn-3d btn-block">View Cart</a>
-        <a href="checkout.html" class="btn btn-outline btn-3d btn-block">Checkout</a>
-      </div>
-    </aside>
-  `;
-}
-
 export function initLayout(activePage = "") {
   const headerEl = document.getElementById("site-header");
   const footerEl = document.getElementById("site-footer");
-  const drawerEl = document.getElementById("cart-drawer");
 
   if (headerEl) headerEl.innerHTML = renderHeader(activePage);
   if (footerEl) footerEl.innerHTML = renderFooter();
-  if (drawerEl) drawerEl.innerHTML = renderCartDrawer();
 
   initNavigation();
-  initCartDrawer();
   updateCartCount();
 }
 
@@ -263,70 +257,4 @@ function initNavigation() {
   document.querySelectorAll(".nav-link").forEach((link) => {
     link.addEventListener("click", () => nav.classList.remove("open"));
   });
-}
-
-function initCartDrawer() {
-  const drawer = document.querySelector(".cart-drawer");
-  const overlay = document.querySelector(".cart-drawer-overlay");
-  const closeBtn = document.querySelector(".cart-drawer-close");
-
-  const openDrawer = () => {
-    drawer?.classList.add("open");
-    overlay?.classList.add("open");
-    document.body.classList.add("no-scroll");
-    renderCartDrawerItems();
-  };
-
-  const closeDrawer = () => {
-    drawer?.classList.remove("open");
-    overlay?.classList.remove("open");
-    document.body.classList.remove("no-scroll");
-  };
-
-  document.querySelectorAll(".cart-trigger").forEach((btn) => {
-    btn.addEventListener("click", openDrawer);
-  });
-
-  closeBtn?.addEventListener("click", closeDrawer);
-  overlay?.addEventListener("click", closeDrawer);
-
-  window.addEventListener("cart-updated", renderCartDrawerItems);
-}
-
-function renderCartDrawerItems() {
-  const container = document.querySelector("[data-cart-drawer-items]");
-  const totalEl = document.querySelector("[data-cart-drawer-total]");
-  if (!container) return;
-
-  const cart = getCart();
-  if (!cart.length) {
-    container.innerHTML = `<p class="cart-empty">Your cart is empty</p>`;
-    if (totalEl) totalEl.textContent = "IQD 0";
-    return;
-  }
-
-  container.innerHTML = cart
-    .map(
-      (item) => `
-      <div class="cart-drawer-item">
-        <img src="${item.image}" alt="${item.name}" loading="lazy" />
-        <div>
-          <h4>${item.name}</h4>
-          <p>${item.quantity} × IQD ${item.price.toLocaleString()}</p>
-        </div>
-      </div>
-    `
-    )
-    .join("");
-
-  if (totalEl) {
-    totalEl.textContent = `IQD ${getCartTotal().toLocaleString()}`;
-  }
-}
-
-export function openCartDrawer() {
-  document.querySelector(".cart-drawer")?.classList.add("open");
-  document.querySelector(".cart-drawer-overlay")?.classList.add("open");
-  document.body.classList.add("no-scroll");
-  renderCartDrawerItems();
 }

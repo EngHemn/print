@@ -6,6 +6,8 @@ import { initCustomDropdown } from "./admin-dropdown.js";
 import { showConfirm } from "./admin-confirm.js";
 import { ADMIN_MESSAGES } from "./admin-messages.js";
 import { formatQuantityLabel } from "./admin-product-utils.js";
+import { adminProductViewUrl } from "./product-detail.js";
+import { applyPanelState } from "./admin-ui-states.js";
 
 let categories = [];
 let products = [];
@@ -14,16 +16,18 @@ let productCategoryFilter = "";
 let productsLoadError = false;
 let filterDropdown = null;
 
+const panelEls = () => ({
+  loading: document.getElementById("products-loading"),
+  error: document.getElementById("products-error"),
+  empty: document.getElementById("products-empty"),
+  content: document.getElementById("products-table-wrap"),
+});
+
 function showPanelState(type, message) {
-  const loading = document.getElementById("products-loading");
+  applyPanelState(panelEls(), type);
+
   const error = document.getElementById("products-error");
   const empty = document.getElementById("products-empty");
-  const tableWrap = document.getElementById("products-table-wrap");
-
-  loading?.toggleAttribute("hidden", type !== "loading");
-  error?.toggleAttribute("hidden", type !== "error");
-  empty?.toggleAttribute("hidden", type !== "empty");
-  tableWrap?.toggleAttribute("hidden", type !== "data");
 
   if (type === "error" && error) {
     error.querySelector("p").textContent = message || ADMIN_MESSAGES.productsError;
@@ -57,7 +61,6 @@ function buildFilterDropdownOptions() {
 
 function renderProductsTable() {
   const tbody = document.getElementById("products-table");
-  const countEl = document.getElementById("products-count");
   if (!tbody || productsLoadError) return;
 
   if (!products.length) {
@@ -66,14 +69,6 @@ function renderProductsTable() {
   }
 
   const filtered = getFilteredProducts();
-
-  if (countEl) {
-    const label = filtered.length === 1 ? "product" : "products";
-    countEl.textContent =
-      filtered.length === products.length
-        ? `${products.length} ${label}`
-        : `${filtered.length} of ${products.length} ${label}`;
-  }
 
   if (!filtered.length) {
     tbody.innerHTML = "";
@@ -96,6 +91,7 @@ function renderProductsTable() {
           <td>${escapeHtml(cat?.name || "—")}</td>
           <td>${gallery.length ? `${gallery.length} img` : "—"}</td>
           <td class="table-actions">
+            <a href="${adminProductViewUrl(p.id)}" class="btn btn-sm btn-outline">View</a>
             <a href="admin-product-form.html?id=${p.id}" class="btn btn-sm btn-outline">Edit</a>
             <button type="button" class="btn btn-sm btn-danger delete-prod" data-id="${p.id}">Delete</button>
           </td>

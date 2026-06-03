@@ -39,16 +39,15 @@
           <label for="product-search" class="sr-only">Search products</label>
           <input type="search" id="product-search" placeholder="Search by name or description…" autocomplete="off" />
         </div>
-        <div class="form-group">
-          <label>Category</label>
+        <div class="form-group products-filter-dropdown">
+          <label for="product-filter-dropdown" class="sr-only">Filter by category</label>
           <div id="product-filter-dropdown"></div>
         </div>
       </div>
-      <p class="products-count" id="products-count">—</p>
     </div>
 
     <div class="admin-panel glass-card admin-panel-relative">
-      <div class="state-message loading-state" id="products-loading" role="status">
+      <div class="state-message loading-state" id="products-loading" hidden role="status">
         <span class="loading-spinner" aria-hidden="true"></span>
         <p>Loading products…</p>
       </div>

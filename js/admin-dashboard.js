@@ -13,6 +13,7 @@ import {
 import { initAdminLayout } from "./admin-layout.js";
 import { showConfirm } from "./admin-confirm.js";
 import { ADMIN_MESSAGES } from "./admin-messages.js";
+import { applyPanelState } from "./admin-ui-states.js";
 
 let categories = [];
 let orders = [];
@@ -65,15 +66,18 @@ function initDashboardSidebar() {
 }
 
 function setListState(prefix, type, message) {
-  const loading = document.getElementById(`${prefix}-loading`);
+  applyPanelState(
+    {
+      loading: document.getElementById(`${prefix}-loading`),
+      error: document.getElementById(`${prefix}-error`),
+      empty: document.getElementById(`${prefix}-empty`),
+      content: document.getElementById(`${prefix}-table-wrap`),
+    },
+    type
+  );
+
   const error = document.getElementById(`${prefix}-error`);
   const empty = document.getElementById(`${prefix}-empty`);
-  const wrap = document.getElementById(`${prefix}-table-wrap`);
-
-  loading?.toggleAttribute("hidden", type !== "loading");
-  error?.toggleAttribute("hidden", type !== "error");
-  empty?.toggleAttribute("hidden", type !== "empty");
-  wrap?.toggleAttribute("hidden", type !== "data");
 
   if (type === "error" && error?.querySelector("p") && message) {
     error.querySelector("p").textContent = message;

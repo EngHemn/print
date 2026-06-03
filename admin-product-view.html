@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View Product | Admin | Shopping Bag</title>
+  <link rel="icon" href="images/logo.png" type="image/png" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-brand">
+      <img src="images/logo.png" alt="Shopping Bag" />
+      <span class="gradient-text">Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="admin-dashboard.html" class="sidebar-link" data-page="dashboard">📊 Dashboard</a>
+      <a href="admin-dashboard.html#categories" class="sidebar-link" data-page="categories">📁 Categories</a>
+      <a href="admin-products.html" class="sidebar-link active" data-page="products">🛍️ Products</a>
+      <a href="admin-dashboard.html#orders" class="sidebar-link" data-page="orders">📦 Orders</a>
+    </nav>
+    <button class="btn btn-outline btn-sm" id="logout-btn">Logout</button>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-start">
+        <button class="admin-menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button>
+        <a href="admin-products.html" class="admin-back-link" aria-label="Back to products">←</a>
+        <h2>View Product</h2>
+      </div>
+      <div class="admin-topbar-actions" id="admin-view-actions"></div>
+    </div>
+
+    <div class="admin-panel glass-card admin-panel-relative" id="admin-product-view-root">
+      <div class="state-message loading-state" id="admin-view-loading" role="status">
+        <span class="loading-spinner" aria-hidden="true"></span>
+        <p>Loading product…</p>
+      </div>
+      <div class="state-message error-state admin-alert" id="admin-view-error" hidden role="alert">
+        <p>Could not load product.</p>
+        <button type="button" class="btn btn-sm btn-outline" id="admin-view-retry">Try again</button>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="js/admin-product-view.js"></script>
+</body>
+</html>

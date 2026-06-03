@@ -1,12 +1,7 @@
 import { initLayout } from "./cart.js";
 import { initAllAnimations, observeAnimatedElements } from "./animations.js";
 import { fetchCategories, fetchProducts } from "./firestore.js";
-import {
-  renderProductCard,
-  bindProductEvents,
-  filterProducts,
-  openProductModal,
-} from "./products.js";
+import { renderProductCard, filterProducts } from "./products.js";
 import { renderCategoryCard } from "./categories.js";
 import { debounce } from "./config.js";
 import { showLoading, showEmpty, showError, MESSAGES } from "./ui-states.js";
@@ -177,7 +172,6 @@ async function initShop() {
       renderProducts(grid, searchInput);
     }
 
-    bindProductEvents(allProducts, grid);
   }
 
   categoriesList?.addEventListener("click", (e) => {
@@ -195,7 +189,6 @@ async function initShop() {
     debounce(() => renderProducts(grid, searchInput), 250)
   );
 
-  window.addEventListener("wishlist-updated", () => renderProducts(grid, searchInput));
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -204,4 +197,3 @@ document.addEventListener("DOMContentLoaded", () => {
   initShop();
 });
 
-export { openProductModal };

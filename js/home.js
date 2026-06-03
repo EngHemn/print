@@ -1,7 +1,7 @@
 import { initLayout } from "./cart.js";
 import { initAllAnimations, observeAnimatedElements } from "./animations.js";
 import { fetchCategories, fetchProducts } from "./firestore.js";
-import { renderProductCard, bindProductEvents } from "./products.js";
+import { renderProductCard } from "./products.js";
 import { renderCategoryCard } from "./categories.js";
 import { showLoading, showEmpty, showError, MESSAGES } from "./ui-states.js";
 
@@ -54,7 +54,6 @@ function renderHomeProducts(productsGrid) {
   }
   productsGrid.innerHTML = featured.map((p) => renderProductCard(p)).join("");
   observeAnimatedElements(productsGrid);
-  bindProductEvents(homeProducts, productsGrid);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -63,7 +62,3 @@ document.addEventListener("DOMContentLoaded", () => {
   initHome();
 });
 
-window.addEventListener("wishlist-updated", () => {
-  const grid = document.getElementById("home-products-grid");
-  if (grid && homeProducts.length) renderHomeProducts(grid);
-});

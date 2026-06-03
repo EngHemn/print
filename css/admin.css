@@ -260,6 +260,11 @@
   border: 0;
 }
 
+[hidden],
+.is-hidden {
+  display: none !important;
+}
+
 .products-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -268,6 +273,9 @@
   gap: 1rem;
   padding: 1.25rem 1.5rem;
   margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 40;
+  overflow: visible;
 }
 
 .products-toolbar-filters {
@@ -473,7 +481,20 @@ body.no-scroll {
 
 .admin-panel-relative {
   position: relative;
+  z-index: 1;
   min-height: 120px;
+  overflow: visible;
+}
+
+.admin-panel-relative > .state-message.loading-state,
+.admin-panel-relative > .form-page-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  margin: 0;
+  padding: 2rem;
+  background: rgba(10, 10, 14, 0.92);
+  border-radius: inherit;
 }
 
 .admin-alert {
@@ -499,6 +520,11 @@ body.no-scroll {
 .custom-dropdown {
   position: relative;
   width: 100%;
+  z-index: 1;
+}
+
+.custom-dropdown.open {
+  z-index: 200;
 }
 
 .custom-dropdown-toggle {
@@ -549,7 +575,7 @@ body.no-scroll {
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  z-index: 50;
+  z-index: 210;
   max-height: 240px;
   overflow-y: auto;
   margin: 0;
@@ -648,9 +674,6 @@ body.no-scroll {
 }
 
 .form-page-loading {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
   display: flex;
   flex-direction: column;
   align-items: center;

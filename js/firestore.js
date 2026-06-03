@@ -11,6 +11,7 @@ import {
   serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { db } from "../firebase.js";
+import { normalizeColors } from "./product-colors.js";
 
 function sortByCreatedAt(items) {
   return items.sort((a, b) => {
@@ -81,8 +82,8 @@ function normalizeProductData(data) {
     price: Number(data.price),
     stock: Number(data.stock),
     packQuantity: Number(data.packQuantity) || 0,
-    packUnit: (data.packUnit || "bag").trim(),
     images,
+    colors: normalizeColors(data.colors),
   };
 }
 

@@ -1,17 +1,8 @@
-import { formatPrice, escapeHtml } from "./config.js";
+import { escapeHtml, formatPrice } from "./config.js";
 
 export const MAX_GALLERY_IMAGES = 15;
 
-export function formatQuantityLabel(product) {
-  const qty = product.packQuantity ?? product.quantity;
-  const unit = product.packUnit || "bag";
-  const price = product.price;
-  if (qty != null && qty !== "") {
-    return `${qty} ${unit} by ${formatPrice(price)}`;
-  }
-  if (product.quantityLabel) return product.quantityLabel;
-  return formatPrice(price);
-}
+export { formatQuantityLabel } from "./product-detail.js";
 
 export function parseGalleryUrls(raw) {
   if (!raw) return [];
@@ -42,12 +33,11 @@ export function updateQuantityPreview() {
   const form = document.getElementById("product-form");
   if (!preview || !form) return;
   const qty = form.packQuantity?.value || "—";
-  const unit = form.packUnit?.value?.trim() || "bag";
   const price = form.price?.value;
   preview.textContent =
     price !== "" && price != null
-      ? `Preview: ${qty} ${unit} by ${formatPrice(Number(price))}`
-      : `Preview: ${qty} ${unit}`;
+      ? `Preview: ${qty} by ${formatPrice(Number(price))}`
+      : `Preview: ${qty}`;
 }
 
 export function syncGalleryHint(count) {

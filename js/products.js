@@ -1,80 +1,31 @@
 import { formatPrice, escapeHtml } from "./config.js";
+import { productPageUrl, formatQuantityLabel, formatCardPriceLine } from "./product-detail.js";
 
-export function formatQuantityLabel(product) {
-  const qty = product.packQuantity ?? product.quantity;
-  const unit = product.packUnit || "bag";
-  if (qty != null && qty !== "") {
-    return `${qty} ${unit} by ${formatPrice(product.price)}`;
-  }
-  if (product.quantityLabel) return product.quantityLabel;
-  return formatPrice(product.price);
-}
-import {
-  addToCart,
-  toggleWishlist,
-  isInWishlist,
-  showToast,
-  openCartDrawer,
-} from "./cart.js";
+export { formatQuantityLabel } from "./product-detail.js";
 
-export function renderProductCard(product, options = {}) {
-  const { showWishlist = true, showAddToCart = true } = options;
-  const wished = isInWishlist(product.id);
+import { addToCart, showToast } from "./cart.js";
+
+export function renderProductCard(product) {
+  const viewUrl = productPageUrl(product.id);
+  const { pack, price } = formatCardPriceLine(product);
+  const priceHtml = pack
+    ? `<span class="product-pack-qty">${escapeHtml(pack)}</span><span class="product-price-value gradient-text">${price}</span>`
+    : `<span class="product-price-value gradient-text">${price}</span>`;
 
   return `
-    <article class="product-card card-3d fade-in" data-product-id="${product.id}">
+    <a href="${viewUrl}" class="product-card card-3d fade-in" data-product-id="${product.id}">
       <div class="product-image-wrap">
         <img src="${product.image || "images/placeholder-bag.svg"}" alt="${escapeHtml(product.name)}" loading="lazy" class="product-image" />
-        ${showWishlist ? `<button class="wishlist-btn ${wished ? "active" : ""}" data-wishlist="${product.id}" aria-label="Add to wishlist">
-          <svg viewBox="0 0 24 24" fill="${wished ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        </button>` : ""}
-        <div class="product-overlay">
-          <button class="btn btn-sm btn-outline view-product" data-view="${product.id}">Quick View</button>
-        </div>
       </div>
       <div class="product-info">
         <h3 class="product-name">${escapeHtml(product.name)}</h3>
-        <p class="product-quantity-label">${escapeHtml(formatQuantityLabel(product))}</p>
-        <p class="product-price gradient-text">${formatPrice(product.price)}</p>
-        ${showAddToCart ? `<button class="btn btn-primary btn-3d btn-sm add-to-cart" data-add="${product.id}">Add To Cart</button>` : ""}
+        <p class="product-price">${priceHtml}</p>
       </div>
-    </article>
+    </a>
   `;
 }
 
-export function bindProductEvents(products, container) {
-  if (!container) return;
-
-  container.addEventListener("click", (e) => {
-    const addBtn = e.target.closest("[data-add]");
-    if (addBtn) {
-      const product = products.find((p) => p.id === addBtn.dataset.add);
-      if (product) {
-        addToCart(product);
-        showToast(`${product.name} added to cart`);
-        openCartDrawer();
-      }
-      return;
-    }
-
-    const wishBtn = e.target.closest("[data-wishlist]");
-    if (wishBtn) {
-      const id = wishBtn.dataset.wishlist;
-      const active = toggleWishlist(id);
-      wishBtn.classList.toggle("active", active);
-      const svg = wishBtn.querySelector("svg");
-      if (svg) svg.setAttribute("fill", active ? "currentColor" : "none");
-      showToast(active ? "Added to wishlist" : "Removed from wishlist");
-      return;
-    }
-
-    const viewBtn = e.target.closest("[data-view]");
-    if (viewBtn) {
-      const product = products.find((p) => p.id === viewBtn.dataset.view);
-      if (product) openProductModal(product);
-    }
-  });
-}
+export function bindProductEvents() {}
 
 export function openProductModal(product) {
   let modal = document.getElementById("product-modal");
@@ -156,7 +107,6 @@ export function openProductModal(product) {
     addToCart(product, Number(qtyInput.value));
     showToast(`${product.name} added to cart`);
     close();
-    openCartDrawer();
   };
 }
 
